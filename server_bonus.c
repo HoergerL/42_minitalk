@@ -39,10 +39,10 @@ void	ft_putnbr(int n)
 }
 
 
-void receive_char(int signal)
+void receive_char(int signal, siginfo_t *siginfo, void *context)
 {
 	static char c = 0;
-	static int shift = 6;
+	static int shift = 7;
 	//write(1, "receive char", 10);
 
 	if (signal == SIGUSR1)
@@ -55,10 +55,12 @@ void receive_char(int signal)
 	if (shift < 0)
 	{
 		write(1, &c, 1);
-		shift = 6;
+		shift = 7;
 		c = 0;
 	}
 	//write(1, "versendet signal", 10);
+	usleep(40);
+	kill(siginfo->si_pid, SIGUSR1);
 }
 
 int main(void)
@@ -68,8 +70,8 @@ int main(void)
 	write(1, "\n", 1);
 	struct sigaction sa;
 	//sa.sa_flags = SA_RESTART;
-	//sa.sa_sigaction = &receive_char;
-	sa.sa_handler = &receive_char;
+	sa.sa_sigaction = &receive_char;
+	//sa.sa_handler = &receive_char;
 	
 	while(1)
 	{
