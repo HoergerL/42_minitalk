@@ -1,40 +1,59 @@
-#include <signal.h>
-#include <unistd.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhoerger <lhoerger@student.42heilbronn.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/13 11:28:58 by lhoerger          #+#    #+#             */
+/*   Updated: 2021/10/13 13:34:50 by lhoerger         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//Achtung printf
+#include "minitalk.h"
 
-int main (int argc, char *argv[])
+void	check_input_error(int argc, char *argv[])
 {
-	int i;
-	int shift;
+	int	i;
+
 	i = 0;
-	if (argc != 3 || (isdigit(argv[1]))) //Achtung is digit
+	if (argc != 3 )
 	{
-		printf("Wrong input");
-		return (1);
+		ft_printf("Wrong number of inputs\n");
+		exit(1);
 	}
+	while (argv[1][i])
+	{
+		if (!(ft_isdigit(argv[1][i])))
+		{
+			ft_printf("The process ID is wrong");
+			exit(1);
+		}
+		i++;
+	}
+}
+
+int	main(int argc, char *argv[])
+{
+	int	i;
+	int	shift;
+
+	i = 0;
+	check_input_error(argc, argv);
 	while (argv[2][i] != '\0')
 	{
 		shift = 6;
-		while(shift >= 0)
+		while (shift >= 0)
 		{
-			//printf("shift: %i, und: %i\n", 1 << shift, argv[2][i]& (1 << shift));
 			if ((argv[2][i] & (1 << shift)) > 0)
-			{
-				printf("1");
-				kill(atoi(argv[1]), SIGUSR1); // Achtung atoi
-			}
-			else 
-			{
-				printf("0");
-				kill(atoi(argv[1]), SIGUSR2); // Achtung atoi
-			}
+				kill(ft_atoi(argv[1]), SIGUSR1);
+			else
+				kill(ft_atoi(argv[1]), SIGUSR2);
 			usleep(55);
-			//write(1, "vor pause", 10);
 			shift--;
 		}
 		i++;
-		//usleep(500);
+		usleep(50);
 	}
 	return (0);
 }

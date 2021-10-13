@@ -1,56 +1,69 @@
-#include <signal.h>
-#include <unistd.h>
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   client_bonus.c                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: lhoerger <lhoerger@student.42heilbronn.    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/10/13 13:27:40 by lhoerger          #+#    #+#             */
+/*   Updated: 2021/10/13 13:33:55 by lhoerger         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 
-//Achtung printf
+#include "minitalk.h"
 
-void receive_char()
+void	receive_char(int signal)
 {
-	return;
+	signal = 0;
+	return ;
 }
 
-int main (int argc, char *argv[])
+void	check_input_error(int argc, char *argv[])
 {
-	int i;
-	int shift;
-	struct sigaction	sa;
+	int	i;
+
 	i = 0;
-	if (argc != 3 || (isdigit(argv[1]))) //Achtung is digit
+	if (argc != 3 )
 	{
-		printf("Wrong input");
-		return (1);
+		ft_printf("Wrong number of inputs\n");
+		exit(1);
 	}
+	while (argv[1][i])
+	{
+		if (!(ft_isdigit(argv[1][i])))
+		{
+			ft_printf("The process ID is wrong");
+			exit(1);
+		}
+		i++;
+	}
+}
+
+int	main(int argc, char *argv[])
+{
+	int					i;
+	int					shift;
+	struct sigaction	sa;
+
+	i = 0;
+	check_input_error(argc, argv);
 	sa.sa_handler = &receive_char;
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGUSR1, &sa, NULL);
 	while (argv[2][i] != '\0')
 	{
 		shift = 7;
-		while(shift >= 0)
+		while (shift >= 0)
 		{
-			//printf("shift: %i, und: %i\n", 1 << shift, argv[2][i]& (1 << shift));
 			if ((argv[2][i] & (1 << shift)) > 0)
-			{
-				printf("1");
-				kill(atoi(argv[1]), SIGUSR1); // Achtung atoi
-			}
-			else 
-			{
-				printf("0");
-				kill(atoi(argv[1]), SIGUSR2); // Achtung atoi
-			}
-			
-			//write(1, "vor pause", 10);
+				kill(ft_atoi(argv[1]), SIGUSR1);
+			else
+				kill(ft_atoi(argv[1]), SIGUSR2);
 			pause();
 			usleep(40);
 			shift--;
 		}
 		i++;
-		//usleep(500);
 	}
 	return (0);
 }
-
-
-
-//11001000111101010000011001010100101 		0111101
-//1100100011110101000001100101 001001010 0111101

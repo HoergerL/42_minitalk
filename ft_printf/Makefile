@@ -6,7 +6,7 @@ FLAGS = -Wall -Wextra -Werror
 
 SRC = ft_printf_utils.c ft_printf.c ft_putchar.c ft_putnbr.c ft_putstr.c put_ptr.c puthex.c putunsigndec.c
 
-LIBFT_PATH = ./libft/
+LIBFT_PATH = ../libft/
 
 MAKE = make
 
